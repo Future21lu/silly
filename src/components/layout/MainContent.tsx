@@ -13,7 +13,7 @@ export const MainContent: React.FC<MainContentProps> = ({
   onGoClick 
 }) => {
   return (
-    <main className="flex-grow flex flex-col items-center justify-center text-center px-4">
+    <main className="flex-grow flex flex-col items-center justify-center text-center px-4 z-10">
       <AnimatePresence mode="wait">
         <motion.p
           key={messageIndex}
@@ -21,11 +21,7 @@ export const MainContent: React.FC<MainContentProps> = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-4xl text-white font-semibold max-w-md sm:max-w-2xl mb-8 h-24 sm:h-32 flex items-center justify-center"
-          style={{
-            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 255, 255, 0.2)',
-            filter: 'drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2))'
-          }}
+          className="text-2xl sm:text-3xl lg:text-4xl text-gray-800 font-bold max-w-md sm:max-w-2xl mb-12 leading-tight"
         >
           {playfulMessages[messageIndex].message}
         </motion.p>
@@ -33,17 +29,10 @@ export const MainContent: React.FC<MainContentProps> = ({
 
       <motion.button
         onClick={onGoClick}
-        whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.3)' }}
-        whileTap={{ 
-          scale: 0.98, 
-          boxShadow: '0 0 0 4px rgba(156, 183, 214, 0.3), 0 0 20px rgba(0, 0, 0, 0.2), 0 20px 40px -10px rgba(0, 0, 0, 0.3)' 
-        }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        className="min-w-[280px] h-20 sm:min-w-[340px] sm:h-24 px-8 rounded-full bg-white/20 backdrop-blur-xl shadow-xl flex items-center justify-center text-xl sm:text-2xl font-semibold text-white tracking-tight border border-white/30 focus:outline-none"
-        style={{
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
-          backdropFilter: 'blur(20px)'
-        }}
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+        className="px-8 py-4 sm:px-10 sm:py-5 text-lg sm:text-xl font-semibold text-gray-800 bg-white/70 backdrop-blur-lg border border-white/60 rounded-full shadow-lg hover:shadow-xl hover:bg-white/80 transition-all duration-200"
       >
         <AnimatePresence mode="wait">
           <motion.span
