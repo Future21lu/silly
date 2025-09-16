@@ -1,1 +1,2 @@
-{"code":"rate-limited","message":"You have hit the rate limit. Please upgrade to keep chatting.","providerLimitHit":false,"isRetryable":true}
+dont change txt and design button only change comol
+
