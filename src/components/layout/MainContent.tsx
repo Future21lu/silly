@@ -37,13 +37,13 @@ export const MainContent: React.FC<MainContentProps> = ({
         whileTap={{ scale: 0.98 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         className="relative min-w-[280px] h-20 sm:min-w-[340px] sm:h-24 px-8 rounded-3xl overflow-hidden group focus:outline-none bg-white/10 backdrop-blur-xl border border-white/20"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 69, 0, 0.08))',
+          background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.15), rgba(255, 69, 0, 0.12))',
           backdropFilter: 'blur(30px)',
+          border: '1px solid rgba(255, 140, 0, 0.3)',
           boxShadow: `
-            0 8px 32px rgba(255, 140, 0, 0.1),
+            0 8px 32px rgba(255, 140, 0, 0.15),
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
-            0 1px 0 rgba(255, 255, 255, 0.1)
+            0 1px 0 rgba(255, 140, 0, 0.1)
           `
         }}
       >
