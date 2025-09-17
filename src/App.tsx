@@ -1,129 +1,148 @@
 import React, { useState, useEffect } from 'react';
-import { Header } from './components/layout/Header';
-import { MainContent } from './components/layout/MainContent';
-import { Footer } from './components/layout/Footer';
-import { BackgroundShapes } from './components/layout/BackgroundShapes';
-import { usePlayfulMessages } from './hooks/usePlayfulMessages';
-import bgImage from './assets/bg.png';
-import bbgImage from './assets/bbg.jpg';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const App: React.FC = () => {
-  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
-  const { messageIndex, playfulMessages, stopInterval } = usePlayfulMessages();
+  const [clickCount, setClickCount] = useState(0);
+  const [showPrank, setShowPrank] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Prevent right-click context menu and copy/paste shortcuts
-  useEffect(() => {
-    const preventContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      return false;
-    };
+  const prankMessages = [
+    "Wait... did you just click that? 🤔",
+    "Hmm, interesting choice... 👀",
+    "You're really going for it, aren't you? 😏",
+    "Okay, this is getting suspicious... 🕵️",
+    "GOTCHA! 🎉 You've been pranked! This button does absolutely nothing! 😂"
+  ];
 
-    const preventKeyboardShortcuts = (e: KeyboardEvent) => {
-      // Prevent common copy/paste/select shortcuts
-      if (
-        (e.ctrlKey || e.metaKey) && 
-        (e.key === 'a' || e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 's' || e.key === 'p')
-      ) {
-        e.preventDefault();
-        return false;
-      }
+  const handleButtonClick = () => {
+    setClickCount(prev => prev + 1);
+    if (clickCount >= 4) {
+      setShowPrank(true);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (clickCount >= 2 && clickCount < 4) {
+      // Make the button run away from the cursor
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const getButtonStyle = () => {
+    if (clickCount >= 2 && clickCount < 4) {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const offsetX = mousePosition.x > centerX ? -100 : 100;
+      const offsetY = mousePosition.y > centerY ? -50 : 50;
       
-      // Prevent F12 (Developer Tools)
-      if (e.key === 'F12') {
-        e.preventDefault();
-        return false;
-      }
-      
-      // Prevent Ctrl+Shift+I (Developer Tools)
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
-        e.preventDefault();
-        return false;
-      }
-      
-      // Prevent Ctrl+U (View Source)
-      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
-        e.preventDefault();
-        return false;
-      }
-    };
-
-    const preventDragStart = (e: DragEvent) => {
-      e.preventDefault();
-      return false;
-    };
-
-    const preventSelectStart = (e: Event) => {
-      e.preventDefault();
-      return false;
-    };
-
-    // Add event listeners
-    document.addEventListener('contextmenu', preventContextMenu);
-    document.addEventListener('keydown', preventKeyboardShortcuts);
-    document.addEventListener('dragstart', preventDragStart);
-    document.addEventListener('selectstart', preventSelectStart);
-
-    // Cleanup
-    return () => {
-      document.removeEventListener('contextmenu', preventContextMenu);
-      document.removeEventListener('keydown', preventKeyboardShortcuts);
-      document.removeEventListener('dragstart', preventDragStart);
-      document.removeEventListener('selectstart', preventSelectStart);
-    };
-  }, []);
-
-  const handleGoClick = () => {
-    stopInterval();
-    console.log("Button clicked! Navigating to a silly site...");
-  };
-
-  const handleCoffeeClick = () => {
-    console.log("Coffee button clicked!");
-  };
-
-  const handleLeaderboardClick = () => {
-    console.log("Leaderboard button clicked!");
-  };
-
-  const handleMouseEnter = (buttonType: string) => {
-    setHoveredButton(buttonType);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredButton(null);
+      return {
+        transform: `translate(${offsetX}px, ${offsetY}px)`,
+        transition: 'transform 0.3s ease-out'
+      };
+    }
+    return {};
   };
 
   return (
     <div 
-      className="relative w-full h-screen overflow-hidden font-sans text-gray-800 flex flex-col items-center justify-center p-4 sm:p-8"
-      style={{
-        backgroundImage: `url(${bgImage}), url(${bbgImage})`,
-        backgroundSize: '124%, cover',
-        backgroundPosition: 'left bottom, center',
-        backgroundRepeat: 'no-repeat, no-repeat'
-      }}
+      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-8"
+      onMouseMove={handleMouseMove}
     >
-      <BackgroundShapes />
-      
-      <Header 
-        hoveredButton={hoveredButton}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      />
+      <div className="max-w-2xl mx-auto text-center">
+        <motion.h1 
+          className="text-4xl md:text-6xl font-bold text-gray-800 mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          {showPrank ? "🎭 PRANKED!" : "Welcome!"}
+        </motion.h1>
 
-      <MainContent 
-        messageIndex={messageIndex}
-        playfulMessages={playfulMessages}
-        onGoClick={handleGoClick}
-      />
+        <AnimatePresence mode="wait">
+          {!showPrank ? (
+            <motion.div
+              key="normal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-8"
+            >
+              <p className="text-xl text-gray-600 mb-8">
+                {clickCount === 0 && "Click the button below to get started!"}
+                {clickCount === 1 && "Great! One more time..."}
+                {clickCount === 2 && "Hmm, the button seems a bit... shy now 🤭"}
+                {clickCount === 3 && "It's really trying to avoid you! 😅"}
+                {clickCount >= 4 && "You're persistent, I'll give you that! 😂"}
+              </p>
 
-      <Footer 
-        hoveredButton={hoveredButton}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onCoffeeClick={handleCoffeeClick}
-        onLeaderboardClick={handleLeaderboardClick}
-      />
+              <motion.button
+                onClick={handleButtonClick}
+                style={getButtonStyle()}
+                whileHover={{ scale: clickCount < 2 ? 1.05 : 1 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-lg transition-colors duration-200"
+              >
+                {clickCount === 0 && "Click Me!"}
+                {clickCount === 1 && "Click Again!"}
+                {clickCount === 2 && "Catch Me!"}
+                {clickCount === 3 && "Still Trying?"}
+                {clickCount >= 4 && "You Got Me!"}
+              </motion.button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="prank"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-6"
+            >
+              <div className="text-6xl mb-4">🎉</div>
+              <p className="text-2xl text-gray-700 mb-6">
+                Congratulations! You just spent time clicking a button that does absolutely nothing!
+              </p>
+              <p className="text-lg text-gray-600 mb-8">
+                But hey, at least you're persistent! 😄
+              </p>
+              
+              <motion.button
+                onClick={() => {
+                  setClickCount(0);
+                  setShowPrank(false);
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transition-colors duration-200"
+              >
+                Prank Someone Else! 😈
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!showPrank && clickCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-8"
+          >
+            <p className="text-sm text-gray-500">
+              Clicks: {clickCount} / 5
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+              <div 
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(clickCount / 5) * 100}%` }}
+              ></div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Floating elements for visual interest */}
+      <div className="absolute top-10 left-10 text-4xl animate-bounce">🎈</div>
+      <div className="absolute top-20 right-20 text-3xl animate-pulse">⭐</div>
+      <div className="absolute bottom-20 left-20 text-3xl animate-bounce" style={{ animationDelay: '1s' }}>🎪</div>
+      <div className="absolute bottom-10 right-10 text-4xl animate-pulse" style={{ animationDelay: '2s' }}>🎭</div>
     </div>
   );
 };
